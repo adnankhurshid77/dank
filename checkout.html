@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Sultan-ul-Arifeen</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .checkout-container {
+            max-width: 1000px;
+            margin: 4rem auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 3rem;
+        }
+
+        .checkout-card {
+            background: var(--white);
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .checkout-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-main);
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: inherit;
+        }
+
+        .order-summary {
+            background: linear-gradient(135deg, var(--bg-color-light) 0%, #E8E8E4 100%);
+            border-radius: 12px;
+            padding: 2rem;
+            height: fit-content;
+            position: sticky;
+            top: 2rem;
+        }
+
+        .summary-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .summary-item img {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .summary-details {
+            flex: 1;
+        }
+
+        .summary-details h4 {
+            font-size: 0.95rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .summary-total {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .success-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(5px);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            flex-direction: column;
+        }
+
+        .success-overlay.active {
+            display: flex;
+        }
+
+        @media (max-width: 800px) {
+            .checkout-container {
+                grid-template-columns: 1fr;
+            }
+
+            .order-summary {
+                position: static;
+                order: -1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar Minimal -->
+    <header class="navbar-wrapper">
+        <nav class="navbar" style="justify-content: center;">
+            <div class="logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="logo-icon">
+                    <path
+                        d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+                        stroke="#154c33" stroke-width="2" />
+                    <path d="M12 22C12 22 12 14 17 12C22 10 22 12 22 12" stroke="#154c33" stroke-width="2" />
+                    <path d="M2 12C2 12 10 12 12 7C14 2 12 2 12 2" stroke="#154c33" stroke-width="2" />
+                </svg>
+                <span>Sultan-ul-Arifeen Checkout</span>
+            </div>
+            <a href="adnan.html" style="position: absolute; left: 2rem; color: var(--text-muted);">&larr; Back to
+                Shop</a>
+        </nav>
+    </header>
+
+    <div class="checkout-container">
+        <div class="checkout-card">
+            <h2 class="checkout-header">Delivery Details</h2>
+            <form id="checkoutForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>First Name</label>
+                        <input type="text" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Last Name</label>
+                        <input type="text" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" required placeholder="+91 ">
+                </div>
+
+                <div class="form-group">
+                    <label>Street Address</label>
+                    <input type="text" required placeholder="House number and street name">
+                </div>
+
+                <div class="form-group">
+                    <label>Apartment, suite, etc. (optional)</label>
+                    <input type="text" placeholder="Apartment, suite, unit, building, floor, etc.">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>City</label>
+                        <input type="text" required placeholder="e.g. Srinagar">
+                    </div>
+                    <div class="form-group">
+                        <label>State / Province</label>
+                        <select required
+                            style="width: 100%; padding: 0.8rem; border: 1px solid var(--border-color); border-radius: 8px; font-family: inherit; background: white;">
+                            <option value="">Select State</option>
+                            <option value="jk">Jammu & Kashmir</option>
+                            <option value="ladakh">Ladakh</option>
+                            <option value="pb">Punjab</option>
+                            <option value="hp">Himachal Pradesh</option>
+                            <option value="hr">Haryana</option>
+                            <option value="dl">Delhi</option>
+                            <!-- Add more states as needed -->
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>PIN Code</label>
+                        <input type="text" required placeholder="e.g. 190001">
+                    </div>
+                </div>
+
+                <h3 style="margin: 2rem 0 1rem; color: var(--primary-color);">Payment</h3>
+                <div
+                    style="padding: 1rem; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 2rem; background: #fbfbfb;">
+                    <p
+                        style="color: var(--text-muted); font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="logo-icon">
+                            <path
+                                d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+                                stroke="#154c33" stroke-width="2" />
+                            <path d="M12 22C12 22 12 14 17 12C22 10 22 12 22 12" stroke="#154c33" stroke-width="2" />
+                            <path d="M2 12C2 12 10 12 12 7C14 2 12 2 12 2" stroke="#154c33" stroke-width="2" />
+                        </svg>
+                        Secure Razorpay Checkout (Cards, UPI, Netbanking)
+                    </p>
+                </div>
+
+                <button type="submit" class="btn btn-primary"
+                    style="width: 100%; justify-content: center; font-size: 1.1rem; padding: 1rem;">Place Order
+                    Now</button>
+            </form>
+        </div>
+
+        <div class="order-summary">
+            <h3 style="margin-bottom: 1.5rem; color: var(--primary-color);">Order Summary</h3>
+            <div id="checkoutItems">
+                <!-- Javascript will load items here -->
+            </div>
+            <div class="summary-total">
+                <span>Total to Pay:</span>
+                <span id="finalTotalAmt" style="color: var(--primary-color);">₹0</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="success-overlay" id="successModal">
+        <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="var(--green-success)" stroke-width="2"
+            style="margin-bottom: 2rem;">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+        <h1 style="color: var(--primary-color);">Order Placed Successfully!</h1>
+        <p style="font-size: 1.2rem; color: var(--text-main); margin-bottom: 2rem;">Thank you! We will deliver your
+            plants soon.</p>
+        <a href="adnan.html" class="btn btn-primary">Return to Shop</a>
+    </div>
+
+    <!-- Custom Cursor -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+
+    <script>
+        // Custom Cursor Logic
+        const cursorDot = document.querySelector(".cursor-dot");
+        const cursorOutline = document.querySelector(".cursor-outline");
+
+        window.addEventListener("mousemove", (e) => {
+            const posX = e.clientX;
+            const posY = e.clientY;
+
+            cursorDot.style.left = `${posX}px`;
+            cursorDot.style.top = `${posY}px`;
+
+            setTimeout(() => {
+                cursorOutline.style.left = `${posX}px`;
+                cursorOutline.style.top = `${posY}px`;
+            }, 50);
+        });
+
+        // Load Cart Data
+        const cart = JSON.parse(localStorage.getItem('nursery_cart')) || [];
+        const checkoutItemsContainer = document.getElementById('checkoutItems');
+        let total = 0;
+
+        if (cart.length === 0) {
+            checkoutItemsContainer.innerHTML = '<p style="color: var(--text-muted);">Your cart is empty.</p>';
+        } else {
+            cart.forEach(item => {
+                total += item.price * item.quantity;
+                const div = document.createElement('div');
+                div.className = 'summary-item';
+                div.innerHTML = `
+                    <img src="${item.image}" alt="${item.name}" onerror="this.src='https://via.placeholder.com/50?text=Img'">
+                    <div class="summary-details">
+                        <h4>${item.name}</h4>
+                        <div style="color: var(--text-muted); font-size: 0.85rem;">Qty: ${item.quantity}</div>
+                    </div>
+                    <div style="font-weight: 500;">₹${item.price * item.quantity}</div>
+                `;
+                checkoutItemsContainer.appendChild(div);
+            });
+        }
+
+        document.getElementById('finalTotalAmt').textContent = `₹${total}`;
+
+        // Add Razorpay Script
+        const script = document.createElement('script');
+        script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+        document.head.appendChild(script);
+
+        // Handle Order with Razorpay Test Mode
+        document.getElementById('checkoutForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            if (cart.length === 0) {
+                alert("Your cart is empty!");
+                return;
+            }
+
+            // In a real app, you MUST create an order on your backend first.
+            // For this HTML-only demo, we use Test Mode with dummy options.
+            const options = {
+                "key": "rzp_test_zCg1sED3PjXmE5", // Working Demo Key
+                "amount": total * 100, // Amount is in currency subunits (paise)
+                "currency": "INR",
+                "name": "Sultan-ul-Arifeen",
+                "description": "Plant Nursery Order",
+                "image": "https://via.placeholder.com/150",
+                "handler": function (response) {
+                    // This function runs on payment success
+                    console.log("Payment Successful!", response);
+
+                    // Clear Cart and Show Success
+                    localStorage.removeItem('nursery_cart');
+                    document.getElementById('successModal').classList.add('active');
+                },
+                "prefill": {
+                    "name": document.querySelectorAll('input[type="text"]')[0].value + " " + document.querySelectorAll('input[type="text"]')[1].value,
+                    "contact": document.querySelector('input[type="tel"]').value
+                },
+                "theme": {
+                    "color": "#1a432b" // Match our primary color
+                }
+            };
+
+            const rzp1 = new window.Razorpay(options);
+
+            rzp1.on('payment.failed', function (response) {
+                alert("Payment Failed. Reason: " + response.error.description);
+            });
+
+            rzp1.open();
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Sultan-ul-Arifeen</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            padding-top: 80px;
+            background-color: #f8f9fa;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .admin-nav {
+            background: var(--white);
+            padding: 1rem 2rem;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .form-card {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: inherit;
+        }
+
+        /* Product Table */
+        .table-card {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th,
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .product-img-thumb {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-sm {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.875rem;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+            border: none;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .empty-state {
+            padding: 3rem;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 900px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-card {
+                position: static;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Custom Cursor -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+
+    <script>
+        // Protect Route
+        if (localStorage.getItem('adminAuth') !== 'true') {
+            window.location.href = 'admin.html';
+        }
+    </script>
+
+    <div class="admin-nav">
+        <div class="logo">
+            Sultan-ul-Arifeen <span style="font-size: 0.9rem; color: var(--text-muted); font-weight: 400;">| Admin
+                Portal</span>
+        </div>
+        <div style="display: flex; gap: 1rem; align-items: center;">
+            <a href="adnan.html" target="_blank" class="btn btn-secondary btn-sm" style="padding: 0.5rem 1rem;">View
+                Live Site</a>
+            <button onclick="logout()" class="btn btn-danger btn-sm"
+                style="padding: 0.5rem 1rem; border-radius: 99px;">Logout</button>
+        </div>
+    </div>
+
+    <div class="container" style="max-width: 1400px;">
+        <div class="dashboard-header" style="margin-top: 2rem;">
+            <h2>Inventory Management</h2>
+        </div>
+
+        <div class="dashboard-grid">
+            <!-- Add Product Form -->
+            <div class="form-card">
+                <h3 id="formTitle">Add New Plant</h3>
+                <form id="productForm">
+                    <input type="hidden" id="productId">
+
+                    <div class="form-group">
+                        <label>Plant Name</label>
+                        <input type="text" id="name" required placeholder="e.g. Ficus Bonsai">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="category" required>
+                            <option value="Indoor">Indoor</option>
+                            <option value="Outdoor">Outdoor</option>
+                            <option value="Ornamental">Ornamental</option>
+                            <option value="Fruit Bearing">Fruit Bearing</option>
+                            <option value="Medicinal">Medicinal</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label>Price (₹)</label>
+                            <input type="number" id="price" required placeholder="1500" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Pieces in Stock</label>
+                            <input type="number" id="stock" required placeholder="10" min="0">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Plant Image</label>
+                        <input type="file" id="imageFile" accept="image/*" style="padding: 0.5rem;">
+                        <input type="hidden" id="imageBase64" required>
+                        <div id="imagePreview" style="margin-top: 1rem; display: none;">
+                            <img src="" alt="Preview"
+                                style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px;">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="description" rows="3" required
+                            placeholder="Short description about the plant..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;"
+                        id="submitBtn">Save Plant</button>
+                    <button type="button" class="btn btn-secondary"
+                        style="width: 100%; justify-content: center; margin-top: 0.5rem; display: none;"
+                        id="cancelEditBtn" onclick="resetForm()">Cancel Edit</button>
+                </form>
+            </div>
+
+            <!-- Products List -->
+            <div class="table-card" style="overflow-x: auto;">
+                <table id="productsTable">
+                    <thead>
+                        <tr>
+                            <th width="80">Image</th>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                            <th width="150">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Rows rendered via JS -->
+                    </tbody>
+                </table>
+                <div id="emptyState" class="empty-state" style="display: none;">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"
+                        style="color: #ccc; margin-bottom: 1rem;">
+                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    <h4>No plants found</h4>
+                    <p>Add a plant using the form to get started.</p>
+                </div>
+            </div>
+
+            <div class="dashboard-header" style="margin-top: 4rem;">
+                <h2>Hero Settings</h2>
+            </div>
+
+            <div class="dashboard-grid" style="grid-template-columns: 1fr; margin-top: 2rem;">
+                <div class="table-card" style="padding: 2rem;">
+                    <h3 style="margin-bottom: 1rem; color: var(--primary-color);">Background Slideshow</h3>
+                    <p style="color: var(--text-muted); margin-bottom: 2rem;">Upload up to 5 images to display as a
+                        slideshow on the main website's hero section.</p>
+
+                    <div class="form-group" style="max-width: 400px;">
+                        <label>Upload New Hero Image</label>
+                        <input type="file" id="heroImageFile" accept="image/*"
+                            style="padding: 0.5rem; margin-bottom: 0.5rem;">
+                        <button class="btn btn-secondary btn-sm" onclick="addHeroImage()" id="addHeroBtn">Add to
+                            Slideshow</button>
+                        <p id="heroUploadStatus"
+                            style="color: #dc3545; font-size: 0.85rem; margin-top: 0.5rem; display: none;">Maximum 5
+                            images allowed.</p>
+                    </div>
+
+                    <div style="margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 2rem;">
+                        <h4>Current Slideshow Images</h4>
+                        <div id="heroPreviewContainer"
+                            style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1rem;">
+                            <!-- Previews rendered via JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // Custom Cursor Logic
+            const cursorDot = document.querySelector(".cursor-dot");
+            const cursorOutline = document.querySelector(".cursor-outline");
+
+            window.addEventListener("mousemove", (e) => {
+                const posX = e.clientX;
+                const posY = e.clientY;
+
+                cursorDot.style.left = `${posX}px`;
+                cursorDot.style.top = `${posY}px`;
+
+                setTimeout(() => {
+                    cursorOutline.style.left = `${posX}px`;
+                    cursorOutline.style.top = `${posY}px`;
+                }, 50);
+            });
+
+            // Database simulation
+            let products = JSON.parse(localStorage.getItem('nursery_products')) || [];
+
+            // Seed with initial data if empty
+            if (products.length === 0) {
+                products = [
+                    { id: '1', name: 'Chinar Tree Sapling', category: 'Ornamental', price: 1500, stock: 15, image: 'images/chinar_tree_sapling_1772639347277.png', description: 'Iconic Kashmir maple tree with stunning autumn foliage. Perfect for large gardens.' },
+                    { id: '2', name: 'Kashmir Apple Tree', category: 'Fruit Bearing', price: 2500, stock: 8, image: 'images/kashmir_apple_tree_1772639377923.png', description: 'Premium Kashmir apple variety. Produces sweet, crisp apples ideal for colder climates.' },
+                    { id: '3', name: 'Money Plant', category: 'Indoor', price: 350, stock: 25, image: 'images/money_plant_1772639393061.png', description: 'Easy-to-care indoor plant that purifies air. Brings good fortune and prosperity.' }
+                ];
+                saveProducts();
+            }
+
+            const tableBody = document.getElementById('tableBody');
+            const emptyState = document.getElementById('emptyState');
+            const form = document.getElementById('productForm');
+
+            function saveProducts() {
+                localStorage.setItem('nursery_products', JSON.stringify(products));
+            }
+
+            function renderTable() {
+                tableBody.innerHTML = '';
+
+                if (products.length === 0) {
+                    emptyState.style.display = 'block';
+                    document.getElementById('productsTable').style.display = 'none';
+                    return;
+                }
+
+                emptyState.style.display = 'none';
+                document.getElementById('productsTable').style.display = 'table';
+
+                products.forEach(p => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                    <td><img src="${p.image}" class="product-img-thumb" onerror="this.src='https://via.placeholder.com/50?text=No+Img'"></td>
+                    <td style="font-weight: 500; color: var(--primary-color);">${p.name}</td>
+                    <td><span style="background: #e2e8e0; padding: 0.2rem 0.6rem; border-radius: 99px; font-size: 0.85rem;">${p.category}</span></td>
+                    <td style="font-weight: 600;">₹${p.price}</td>
+                    <td>
+                        <span style="color: ${p.stock > 0 ? 'var(--green-success)' : '#dc3545'}">
+                            ${p.stock} pcs
+                        </span>
+                    </td>
+                    <td>
+                        <div class="action-btns">
+                            <button onclick="editProduct('${p.id}')" class="btn btn-primary btn-sm" style="padding: 0.4rem 0.6rem;">Edit</button>
+                            <button onclick="deleteProduct('${p.id}')" class="btn btn-danger btn-sm"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path></svg></button>
+                        </div>
+                    </td>
+                `;
+                    tableBody.appendChild(tr);
+                });
+            }
+
+            // Image Upload Handler
+            const imageFileInput = document.getElementById('imageFile');
+            const imageBase64Input = document.getElementById('imageBase64');
+            const imagePreviewDiv = document.getElementById('imagePreview');
+            const imagePreviewImg = imagePreviewDiv.querySelector('img');
+
+            imageFileInput.addEventListener('change', function (e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (event) {
+                        const base64String = event.target.result;
+                        imageBase64Input.value = base64String;
+                        imagePreviewImg.src = base64String;
+                        imagePreviewDiv.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Form Submit Handler
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                const id = document.getElementById('productId').value;
+                const product = {
+                    id: id || Date.now().toString(),
+                    name: document.getElementById('name').value,
+                    category: document.getElementById('category').value,
+                    price: parseFloat(document.getElementById('price').value),
+                    stock: parseInt(document.getElementById('stock').value),
+                    image: document.getElementById('imageBase64').value,
+                    description: document.getElementById('description').value
+                };
+
+                if (id) {
+                    // Update
+                    const index = products.findIndex(p => p.id === id);
+                    products[index] = product;
+                } else {
+                    // Add
+                    products.push(product);
+                }
+
+                saveProducts();
+                renderTable();
+                resetForm();
+            });
+
+            function deleteProduct(id) {
+                if (confirm('Are you sure you want to delete this plant?')) {
+                    products = products.filter(p => p.id !== id);
+                    saveProducts();
+                    renderTable();
+                }
+            }
+
+            function editProduct(id) {
+                const index = products.findIndex(p => p.id === id);
+                const p = products[index];
+
+                document.getElementById('productId').value = p.id;
+                document.getElementById('name').value = p.name;
+                document.getElementById('category').value = p.category;
+                document.getElementById('price').value = p.price;
+                document.getElementById('stock').value = p.stock || 0;
+                document.getElementById('imageBase64').value = p.image;
+                document.getElementById('description').value = p.description;
+
+                // Show Preview
+                imagePreviewImg.src = p.image;
+                imagePreviewDiv.style.display = 'block';
+                imageFileInput.removeAttribute('required'); // Not required when editing unless changing
+
+                document.getElementById('formTitle').innerText = 'Edit Plant';
+                document.getElementById('submitBtn').innerText = 'Update Plant';
+                document.getElementById('cancelEditBtn').style.display = 'flex';
+
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            function resetForm() {
+                form.reset();
+                document.getElementById('productId').value = '';
+                document.getElementById('imageBase64').value = '';
+                document.getElementById('formTitle').innerText = 'Add New Plant';
+                document.getElementById('submitBtn').innerText = 'Save Plant';
+                document.getElementById('cancelEditBtn').style.display = 'none';
+                imagePreviewDiv.style.display = 'none';
+            }
+
+            function logout() {
+                localStorage.removeItem('adminAuth');
+                window.location.href = 'admin.html';
+            }
+
+            // Initial render
+            renderTable();
+
+            // --- Hero Images Logic ---
+            let heroImages = JSON.parse(localStorage.getItem('nursery_hero_images')) || [];
+            const heroPreviewContainer = document.getElementById('heroPreviewContainer');
+            const heroImageFile = document.getElementById('heroImageFile');
+            const addHeroBtn = document.getElementById('addHeroBtn');
+            const heroUploadStatus = document.getElementById('heroUploadStatus');
+
+            function saveHeroImages() {
+                localStorage.setItem('nursery_hero_images', JSON.stringify(heroImages));
+                renderHeroPreviews();
+            }
+
+            function renderHeroPreviews() {
+                heroPreviewContainer.innerHTML = '';
+
+                if (heroImages.length >= 5) {
+                    heroImageFile.disabled = true;
+                    addHeroBtn.disabled = true;
+                    heroUploadStatus.style.display = 'block';
+                } else {
+                    heroImageFile.disabled = false;
+                    addHeroBtn.disabled = false;
+                    heroUploadStatus.style.display = 'none';
+                }
+
+                if (heroImages.length === 0) {
+                    heroPreviewContainer.innerHTML = '<p style="color: var(--text-muted); font-size: 0.9rem;">No images uploaded. The default greenhouse background will be used.</p>';
+                    return;
+                }
+
+                heroImages.forEach((imgBase64, index) => {
+                    const div = document.createElement('div');
+                    div.style.position = 'relative';
+                    div.style.width = '150px';
+                    div.style.height = '100px';
+
+                    div.innerHTML = `
+                    <img src="${imgBase64}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; border: 1px solid #ddd;">
+                    <button onclick="deleteHeroImage(${index})" style="position: absolute; top: -8px; right: -8px; background: #dc3545; color: white; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">&times;</button>
+                `;
+                    heroPreviewContainer.appendChild(div);
+                });
+            }
+
+            function addHeroImage() {
+                const file = heroImageFile.files[0];
+                if (!file) {
+                    alert("Please select an image first.");
+                    return;
+                }
+                if (heroImages.length >= 5) {
+                    alert("Maximum 5 images reached.");
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    const base64String = event.target.result;
+                    heroImages.push(base64String);
+                    saveHeroImages();
+                    heroImageFile.value = ''; // Reset input
+                };
+                reader.readAsDataURL(file);
+            }
+
+            function deleteHeroImage(index) {
+                if (confirm('Delete this background image?')) {
+                    heroImages.splice(index, 1);
+                    saveHeroImages();
+                }
+            }
+
+            // Initial render for Hero
+            renderHeroPreviews();
+        </script>
+</body>
+
+</html>
